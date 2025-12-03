@@ -9,9 +9,10 @@ export default async function handler(req, res) {
 
   // ✅ Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
-    return res.status(200).end();
+    return res.status(200).end(); // respond OK for preflight
   }
 
+  // Only allow POST for actual send-mail
   if (req.method !== "POST") {
     return res
       .status(405)
@@ -23,12 +24,11 @@ export default async function handler(req, res) {
     if (!email || !message)
       return res.status(400).json({ success: false, error: "Missing fields" });
 
-    // transporter: using Gmail SMTP here as example (recommended: use App Password)
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.EMAIL_USER, // your gmail address
-        pass: process.env.EMAIL_PASS, // app password (NOT your normal password)
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 
