@@ -2,6 +2,16 @@
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
+  // ✅ Add CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "*"); // allow all origins
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ✅ Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res
       .status(405)
@@ -22,7 +32,6 @@ export default async function handler(req, res) {
       },
     });
 
-    // you can list multiple recipients in `to`
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.TO_EMAIL || process.env.EMAIL_USER,
